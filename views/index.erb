@@ -35,12 +35,12 @@
               STEP 2
             </p>
             <label for="cropping_start_seconds">Start Time (in seconds)</label>
-            <input type="number" id="cropping_start_seconds" name="cropping[start_seconds]" min="0" placeholder="Start Time" value="{{ start_seconds }}" disabled="{{ wadsworth_constant }}"/>
+            <input type="number" id="cropping_start_seconds" name="cropping[start_seconds]" min="0" placeholder="Start Time" value="{{ start_seconds }}" readonly="{{ wadsworth_constant }}"/>
             <button type="button" id="cropping_capture_start_seconds" title="Capture the start time from the current position in the video." disabled="{{ wadsworth_constant }}" on-click="captureStartTime">Capture</button>
          </div>
          <div>
             <label for="cropping_end_seconds">End Time (in seconds)</label>
-            <input type="number" id="cropping_end_seconds" name="cropping[end_seconds]" min="0" placeholder="End Time" value="{{ end_seconds }}" disabled="{{ wadsworth_constant }}" />
+            <input type="number" id="cropping_end_seconds" name="cropping[end_seconds]" min="0" placeholder="End Time" value="{{ end_seconds }}" readonly="{{ wadsworth_constant }}" />
             <button type="button" id="cropping_capture_end_seconds" title="Capture the end time from the current position in the video." disabled="{{ wadsworth_constant }}" on-click="captureEndTime">Capture</button>
          </div>
          <div>
@@ -49,7 +49,7 @@
             </p>
             <input type="hidden" id="cropping_wadsworth_constant" name="cropping[wadsworth_constant]" value="0"/>
             <input type="checkbox" id="cropping_wadsworth_constant" name="cropping[wadsworth_constant]" checked="{{ wadsworth_constant }}" on-change="toggleWadsworthConstant" value="1"/>
-            <label for="cropping_wadsworth_constant" title="The Wadsworth Constant is an axiom which states that the first 30% of any video can be skipped because it contains no worthwhile or interesting information.">Wadsworth Constant (you must play the video before choosing this option)</label>
+            <label for="cropping_wadsworth_constant" title="The Wadsworth Constant is an axiom which states that the first 30% of any video can be skipped because it contains no worthwhile or interesting information.">Wadsworth Constant (you may need to play the video first before choosing this option)</label>
          </div>
          <div>
             <p>
