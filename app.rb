@@ -1,4 +1,6 @@
 require 'sinatra'
+require 'active_support'
+require 'active_support/core_ext'
 require 'mongo_mapper'
 require 'sinatra/flash'
 
