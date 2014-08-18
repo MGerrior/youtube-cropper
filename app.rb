@@ -29,7 +29,7 @@ configure do
       "development" => { "uri" => "mongodb://localhost" },
       "production" => { "uri" => ENV['MONGOHQ_URL'] }
    }, environment)
-   MongoMapper.database = "youtube_cropper_#{ environment }"
+   MongoMapper.database = "youtube_cropper_#{ environment }" unless environment == "production"
 end
 
 get '/' do
