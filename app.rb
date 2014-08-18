@@ -25,7 +25,7 @@ configure do
 
    MongoMapper.setup({
       "development" => { "uri" => "mongodb://localhost" },
-      "production" => { "uri" => ENV['MONGODB_URI'] }
+      "production" => { "uri" => ENV['MONGOHQ_URL'] }
    }, environment)
    MongoMapper.database = "youtube_cropper_#{ environment }"
 end
