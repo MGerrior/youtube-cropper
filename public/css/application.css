@@ -1,0 +1,25 @@
+.flash-container {
+  width: 640px;
+  margin: 0 auto;
+}
+
+.form-container {
+  width: 640px;
+  margin: 0 auto;
+}
+
+#player {
+  background: lightgray;
+  height: 390px;
+  width: 640px;
+  line-height: 390px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.player-container {
+  height: 390px;
+  width: 640px;
+  margin: 0 auto;
+}
+

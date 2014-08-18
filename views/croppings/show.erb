@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" type="text/css" href="/css/application.css" />
+</head>
+<body>
+   <div class="player-container">
+      <iframe id="player"
+              type="text/html"
+              width="640"
+              height="390"
+              src="http://youtube.com/embed/<%= cropping.youtube_id %>?start=<%= cropping.start_seconds %>&end=<%= cropping.end_seconds %>"
+              frameborder="0"
+              />
+   </div>
+</body>

@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" type="text/css" href="css/application.css">
+  <script src="/js/stapes.min.js"></script>
+  <script src="/js/zepto.min.js"></script>
+  <script src="/js/ractive.min.js"></script>
+  <script>
+    YTCropper = {} || YTCropper;
+      YTCropper.Application = Stapes.subclass({
+         getPlayer: function() {
+            return this.player;
+         },
+         setPlayer: function() {
+            this.player = player;
+         }
+      });
+    YTCropper.Player = Stapes.subclass({
+       constructor: function(player) {
+          this.player = player;
+       },
+       loadVideoByUrl: function(mediaContentUrl) {
+          this.player.loadVideoByUrl(mediaContentUrl);
+       }
+    });
+   YTCropper.YoutubeIdParser = Stapes.subclass({
+      constructor: function() {
+         this.youtubeRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/ ]{11})/i; 
+      },
+      parseYoutubeId: function(url) {
+        var matches = url.match(this.youtubeRegex);
+
+        if (matches != null && matches.length >= 2) {
+           return  matches[1];
+        }
+      }
+   });
+  </script>
+</head>
+<body>
+   <div class="flash-container">
+      <%= styled_flash %>
+   </div>
+   <div class="player-container">
+      <div id="player">
+         Your video will appear here.
+      </div>
+   </div>
+   <div class="form-container">
+   </div>
+
+   <script id="form-template" type="text/ractive">
+      <form name="new_cropping_form" action="/croppings" method="POST">
+         <div>
+            <p>
+               STEP 1
+            </p>
+            <input type="hidden" id="cropping_youtube_id" name="cropping[youtube_id]" class="hide" value="{{ youtube_id }}" />
+
+            <label for="cropping_youtube_url">Youtube URL</label>
+            <input type="text" id="cropping_youtube_url" name="cropping[youtube_url]" placeholder="Enter a Youtube URL" value="{{ youtube_url }}" />
+         </div>
+         <div>
+            <p>
+              STEP 2
+            </p>
+            <label for="cropping_start_seconds">Start Time (in seconds)</label>
+            <input type="number" id="cropping_start_seconds" name="cropping[start_seconds]" min="0" placeholder="Start Time" value="{{ start_seconds }}" disabled="{{ wadsworth_constant }}"/>
+            <button type="button" id="cropping_capture_start_seconds" title="Capture the start time from the current position in the video." disabled="{{ wadsworth_constant }}" on-click="captureStartTime">Capture</button>
+         </div>
+         <div>
+            <label for="cropping_end_seconds">End Time (in seconds)</label>
+            <input type="number" id="cropping_end_seconds" name="cropping[end_seconds]" min="0" placeholder="End Time" value="{{ end_seconds }}" disabled="{{ wadsworth_constant }}" />
+            <button type="button" id="cropping_capture_end_seconds" title="Capture the end time from the current position in the video." disabled="{{ wadsworth_constant }}" on-click="captureEndTime">Capture</button>
+         </div>
+         <div>
+            <p>
+               OR
+            </p>
+            <input type="hidden" id="cropping_wadsworth_constant" name="cropping[wadsworth_constant]" value="0"/>
+            <input type="checkbox" id="cropping_wadsworth_constant" name="cropping[wadsworth_constant]" checked="{{ wadsworth_constant }}" on-change="toggleWadsworthConstant"/>
+            <label for="cropping_wadsworth_constant" title="The Wadsworth Constant is an axiom which states that the first 30% of any video can be skipped because it contains no worthwhile or interesting information.">Wadsworth Constant</label>
+         </div>
+         <div>
+            <p>
+               STEP 3
+            </p>
+            <input type="submit" value="SAVE" />
+         </div>
+      </form>
+   </script>
+
+   <script>
+     var onYoutubeIframeAPIReady;
+     var player;
+
+     var ractive = new Ractive({
+        el: '.form-container',
+        template: '#form-template',
+        data: {wadsworth_constant: false}
+     });
+      ractive.observe('youtube_url', function(newValue) {
+         var parser = new YTCropper.YoutubeIdParser();
+         var youtubeId = parser.parseYoutubeId(newValue);
+
+         if (youtubeId) {
+            ractive.set({ youtube_id: youtubeId });
+
+            if (typeof(YT) === "undefined") {
+              var tag = document.createElement('script');
+
+              tag.src="https://www.youtube.com/iframe_api";
+              var firstScriptTag = document.getElementsByTagName('script')[0];
+              firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+              onYouTubeIframeAPIReady = function() {
+                 player = new YT.Player('player', { videoId: youtubeId, height: '390', width: '640' });
+              }
+            }
+            else {
+              player.loadVideoById(youtubeId);
+            }
+         }
+      });
+
+      // NOTE: Take the floor here instead of rounding or else we will get different
+      // values from what is displayed in the player.
+      ractive.on('captureStartTime', function() {
+         ractive.set({ start_seconds: Math.floor(player.getCurrentTime()) });
+      });
+      ractive.on('captureEndTime', function() {
+         ractive.set({ end_seconds: Math.floor(player.getCurrentTime()) });
+      });
+      ractive.on('toggleWadsworthConstant', function() {
+         if (this.wadsworth_constant) {
+            var duration;
+
+            if (typeof(player) === "undefined") {
+               return;
+            }
+
+            duration = player.getDuration()
+
+            if (duration == 0) {
+               return;
+            }
+
+            ractive.set({ start_seconds: Math.floor(duration * .3) });
+            ractive.set({ end_seconds: duration });
+         }
+      });
+   </script>
+</body>
